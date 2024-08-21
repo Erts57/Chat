@@ -3,9 +3,54 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Chat</title>
+
+        <!-- Link to the stylesheet -->
+        <link rel="stylesheet" href="/styles.css" />
+
+        <title>Chat on Render</title>
     </head>
     <body>
-        <h1>Test</h1>
+        <!-- Landing page for the room -->
+        <div id="roomLandingPage">
+            <h1>Enter Room Code</h1>
+            <!-- Room code input field -->
+            <input type="text" id="roomCode" maxlength="7" />
+            <br /><br /><br />
+            <!-- Button to join a room -->
+            <button id="joinRoomButton" onclick="joinRoom()">Join</button>
+            <br />
+
+            <hr />
+
+            <h1>Join Public Room</h1>
+            <!-- Button to join the public room -->
+            <button id="joinPublicRoomButton" onclick="joinPublicRoom()">Join</button>
+
+            <!-- Link to the source code -->
+            <a href="https://github.com/Erts57/Chat" target="_blank" id="sourceCode">[ Source Code ]</a>
+        </div>
+
+        <!-- Page indicating that the client is connecting to the room -->
+        <div id="roomConnectingPage" class="hidden">
+            <h1>Connecting to Room</h1>
+        </div>
+
+        <!-- Room page -->
+        <div id="room" class="hidden">
+            <!-- Room title -->
+            <h1 id="roomTitle">Room</h1>
+            <div id="messages">
+                <!-- Messages will be displayed here -->
+            </div>
+
+            <!-- Message input field -->
+            <input type="text" id="messageInput" maxlength="256" />
+            <!-- Users online count -->
+            <span id="onlineCount">0 users online</span>
+        </div>
+
+        <!-- Include the Socket.IO and client.js scripts -->
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/client.js"></script>
     </body>
 </html>
