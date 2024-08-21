@@ -88,6 +88,10 @@ class ClientChatManager {
                         break;
                 }
             }
+
+            // TODO: Have it say you got new messages instead of scrolling
+            // Auto-scroll to the bottom of the messages container
+            messagesElement.scrollTop = messagesElement.scrollHeight - messagesElement.clientHeight;
         });
 
         this.socket.on("invalid", () => {
@@ -179,6 +183,7 @@ const nicknameInputElement = document.getElementById("nicknameInput");
 const joinRoomButtonElement = document.getElementById("joinRoomButton");
 const joinPublicRoomButtonElement = document.getElementById("joinPublicRoomButton");
 
+const messagesElement = document.getElementById("messages");
 const messageInputElement = document.getElementById("messageInput");
 
 // Create a new instance of ClientChatManager
@@ -220,6 +225,9 @@ messageInputElement.addEventListener("keyup", function (event) {
         });
         messageInputElement.value = "";
     }
+
+    // Auto-scroll to the bottom of the messages container
+    messagesElement.scrollTop = messagesElement.scrollHeight - messagesElement.clientHeight;
 });
 
 nicknameInputElement.addEventListener("keyup", function (event) {
