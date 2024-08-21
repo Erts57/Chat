@@ -49,17 +49,25 @@ export default class ChatManager {
             });
 
             socket.on("nickname", ({ nickname }: { nickname: string }) => {
+                if (nickname === "") nickname = Date.now().toString();
                 this.setClientnickname(socket.id, nickname);
                 this.sendJoinMessage(this.getClientFromID(socket.id)!);
             });
 
-            socket.on("sendMessage", ({ text, room }: { text: string; room: string }) => {
-                console.log(`Message sent: ${text} in room ${room}`);
-                this.clients.forEach((client) => {
-                    if (client.room === room && client.socketID !== socket.id) {
-                        client.socket.emit("message", {
+            socket.on("sendMessage", ({ text }: { text: string }) => {
+                if (text === "") return;
+                console.log(
+                    `User: ${this.getClientFromID(socket.id)?.nickname} sent: \`${text}\` in room ${
+                        this.getClientFromID(socket.id)?.room
+                    }.`
+                );
+                this.clients.forEach((otherClient) => {
+                    if (otherClient.socketID === socket.id) return;
+                    if (otherClient.room === this.getClientFromID(socket.id)?.room) {
+                        otherClient.socket.emit("message", {
+                            nickname: this.getClientFromID(socket.id)?.nickname,
                             text: text,
-                            room: room
+                            room: this.getClientFromID(socket.id)?.room
                         });
                     }
                 });
@@ -67,7 +75,7 @@ export default class ChatManager {
 
             socket.on("disconnect", () => {
                 if (this.getClientFromID(socket.id)?.room !== "") {
-                    this.sendLeaveMessage(this.getClientFromID(socket.id)!.room);
+                    this.sendLeaveMessage(this.getClientFromID(socket.id)!);
                 }
                 this.removeClientFromID(socket.id);
             });
@@ -98,14 +106,14 @@ export default class ChatManager {
 
     /**
      * Sends a message to all clients in the specified room indicating that a user left.
-     * @param room - The room to send the message to.
+     * @param client - The client that left.
      */
-    public sendLeaveMessage(room: string): void {
-        console.log(`A user left the room: ${room}.`);
+    public sendLeaveMessage(client: Client): void {
+        console.log(`The user: ${client.nickname} left the room: ${client.room}.`);
         this.io.emit("message", {
             type: "leave",
-            text: "A user left the room.",
-            room: room
+            text: `The user <b>${client.nickname}</b> left the room.`,
+            room: client.room
         });
     }
 

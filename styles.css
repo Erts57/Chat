@@ -138,8 +138,9 @@ hr {
 }
 
 .messageContainer {
+    position: relative;
     width: 100%;
-    height: 3rem;
+    height: 3.125rem;
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -154,11 +155,13 @@ hr {
 }
 
 .message {
+    margin-top: 0.5rem;
     padding: 0.5rem;
     border-radius: 0.5rem;
     background-color: rgba(255, 250, 240, 0.5);
     display: inline-block;
     max-width: 50%;
+    min-width: 1rem;
 }
 
 .message.join {
@@ -169,6 +172,19 @@ hr {
 .message.leave {
     background-color: rgba(255, 0, 0, 0.5);
     color: darkred;
+}
+
+.messageNickname {
+    position: absolute;
+    top: 0;
+    font-weight: bold;
+    font-size: 0.75rem;
+}
+.messageNickname.right {
+    right: 0;
+}
+.messageNickname.left {
+    left: 0;
 }
 
 #messageInput {

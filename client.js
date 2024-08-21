@@ -11,11 +11,18 @@ class ClientChatManager {
          * Socket connection object.
          */
         this.socket = null;
+
         /**
          * @type {string}
          * Current room.
          */
         this.room = "";
+
+        /**
+         * @type {string}
+         * Current nickname.
+         */
+        this.nickname = "";
     }
 
     /**
@@ -59,18 +66,25 @@ class ClientChatManager {
      */
     registerEvents() {
         this.socket.on("message", (messageArgs) => {
-            if (messageArgs.room === this.room) {
-                switch (messageArgs.type) {
+            const message = {
+                type: messageArgs?.type,
+                nickname: messageArgs?.nickname,
+                text: messageArgs?.text,
+                room: messageArgs?.room
+            };
+
+            if (message.room === this.room) {
+                switch (message.type) {
                     case "join":
-                        this.createJoinMessage(messageArgs.text, "left");
+                        this.createJoinMessage(message.text, "left");
                         break;
 
                     case "leave":
-                        this.createLeaveMessage();
+                        this.createLeaveMessage(message.text);
                         break;
 
                     default:
-                        this.createMessage(messageArgs.text);
+                        this.createMessage(message.text, message.nickname);
                         break;
                 }
             }
@@ -102,16 +116,21 @@ class ClientChatManager {
      * @param {"left" | "right"} side - The side of the message container.
      * @param {string[]} extraClasses - Additional CSS classes for the message.
      */
-    createMessage(message, side = "left", extraClasses = []) {
+    createMessage(message, nickname = "", side = "left", extraClasses = []) {
         if (side !== "left" && side !== "right") {
             side = "left";
         }
 
         const messageContainerElement = document.createElement("div");
+        const messageNicknameElement = document.createElement("div");
         const messageElement = document.createElement("div");
 
         messageContainerElement.classList.add("messageContainer");
         messageContainerElement.classList.add(side);
+
+        messageNicknameElement.classList.add("messageNickname");
+        messageNicknameElement.classList.add(side);
+        messageNicknameElement.innerHTML = nickname;
 
         messageElement.classList.add("message");
         extraClasses.forEach((extraClass) => {
@@ -119,6 +138,7 @@ class ClientChatManager {
         });
         messageElement.innerHTML = message;
 
+        messageContainerElement.appendChild(messageNicknameElement);
         messageContainerElement.appendChild(messageElement);
         document.getElementById("messages").appendChild(messageContainerElement);
     }
@@ -129,21 +149,22 @@ class ClientChatManager {
      * @param {"left" | "right"} side - The side of the message container.
      */
     createJoinMessage(message, side = "left") {
-        this.createMessage(message, side, ["join"]);
+        this.createMessage(message, "", side, ["join"]);
     }
 
     /**
      * Creates a self-join message.
      */
     createSelfJoinMessage() {
-        this.createMessage("<b>You</b> joined the room.", "right", ["join"]);
+        this.createMessage("<b>You</b> joined the room.", "", "right", ["join"]);
     }
 
     /**
      * Creates a leave message.
+     * @param {string} message - The message text.
      */
-    createLeaveMessage() {
-        this.createMessage("A user left the room.", "left", ["leave"]);
+    createLeaveMessage(message) {
+        this.createMessage(message, "", "left", ["leave"]);
     }
 }
 
@@ -193,21 +214,19 @@ joinRoomButtonElement.addEventListener("click", () =>
 
 messageInputElement.addEventListener("keyup", function (event) {
     if (event.key === "Enter") {
-        clientChatManager.createMessage(messageInputElement.value, "right");
+        clientChatManager.createMessage(messageInputElement.value, clientChatManager.nickname, "right");
         clientChatManager.socket.emit("sendMessage", {
-            text: messageInputElement.value,
-            room: clientChatManager.room
+            text: messageInputElement.value
         });
         messageInputElement.value = "";
-
-        console.log("message sent");
     }
 });
 
 nicknameInputElement.addEventListener("keyup", function (event) {
     if (event.key === "Enter") {
+        clientChatManager.nickname = nicknameInputElement.value;
         clientChatManager.socket.emit("nickname", {
-            nickname: nicknameInputElement.value
+            nickname: clientChatManager.nickname
         });
         clientChatManager.showRoom();
     }
