@@ -62,7 +62,7 @@ class ClientChatManager {
             if (messageArgs.room === this.room) {
                 switch (messageArgs.type) {
                     case "join":
-                        this.createJoinMessage("left");
+                        this.createJoinMessage(messageArgs.text, "left");
                         break;
 
                     case "leave":
@@ -84,6 +84,16 @@ class ClientChatManager {
             console.log("Invalid room code. Please try again.");
             window.alert("Invalid room code. Please try again.");
         });
+    }
+
+    /**
+     * Shows the room.
+     */
+    showRoom() {
+        roomConnectingPageElement.classList.add("hidden");
+        roomElement.classList.remove("hidden");
+        clientChatManager.createSelfJoinMessage("right");
+        messageInputElement.focus();
     }
 
     /**
@@ -115,17 +125,18 @@ class ClientChatManager {
 
     /**
      * Creates a join message.
+     * @param {string} message - The message text.
      * @param {"left" | "right"} side - The side of the message container.
      */
-    createJoinMessage(side = "left") {
-        this.createMessage("A user joined the room.", side, ["join"]);
+    createJoinMessage(message, side = "left") {
+        this.createMessage(message, side, ["join"]);
     }
 
     /**
      * Creates a self-join message.
      */
     createSelfJoinMessage() {
-        this.createMessage("You joined the room.", "right", ["join"]);
+        this.createMessage("<b>You</b> joined the room.", "right", ["join"]);
     }
 
     /**
@@ -141,6 +152,8 @@ const roomLandingPageElement = document.getElementById("roomLandingPage");
 const roomConnectingPageElement = document.getElementById("roomConnectingPage");
 const roomElement = document.getElementById("room");
 const roomTitleElement = document.getElementById("roomTitle");
+
+const nicknameInputElement = document.getElementById("nicknameInput");
 
 const joinRoomButtonElement = document.getElementById("joinRoomButton");
 const joinPublicRoomButtonElement = document.getElementById("joinPublicRoomButton");
@@ -168,13 +181,7 @@ function joinRoomOrPublic(roomCode) {
             clientChatManager.room = roomCode;
             roomTitleElement.innerHTML = roomCode;
         }
-
-        setTimeout(() => {
-            roomConnectingPageElement.classList.add("hidden");
-            roomElement.classList.remove("hidden");
-            clientChatManager.createSelfJoinMessage("right");
-            messageInputElement.focus();
-        }, 1000);
+        nicknameInputElement.focus();
     });
 }
 
@@ -194,5 +201,14 @@ messageInputElement.addEventListener("keyup", function (event) {
         messageInputElement.value = "";
 
         console.log("message sent");
+    }
+});
+
+nicknameInputElement.addEventListener("keyup", function (event) {
+    if (event.key === "Enter") {
+        clientChatManager.socket.emit("nickname", {
+            nickname: nicknameInputElement.value
+        });
+        clientChatManager.showRoom();
     }
 });

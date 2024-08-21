@@ -38,7 +38,7 @@ export default class ChatManager {
                 roomCode = roomCode.substring(0, 7).toUpperCase();
                 if (this.roomList.private.includes(roomCode)) {
                     this.setClientroom(socket.id, roomCode);
-                    this.sendJoinMessage(roomCode, this.getClientFromID(socket.id));
+                    //
                 } else {
                     socket.emit("invalid");
                 }
@@ -46,7 +46,11 @@ export default class ChatManager {
 
             socket.on("publicRoom", () => {
                 this.setClientroom(socket.id, "PUBLICROOM");
-                this.sendJoinMessage("PUBLICROOM", this.getClientFromID(socket.id));
+            });
+
+            socket.on("nickname", ({ nickname }: { nickname: string }) => {
+                this.setClientnickname(socket.id, nickname);
+                this.sendJoinMessage(this.getClientFromID(socket.id)!);
             });
 
             socket.on("sendMessage", ({ text, room }: { text: string; room: string }) => {
@@ -75,18 +79,18 @@ export default class ChatManager {
     }
 
     /**
-     * Sends a message to all clients in the specified room, except for the optional excluded client.
-     * @param room - The room to send the message to.
-     * @param exclude - The client to exclude from receiving the message.
+     * Sends a message to all clients in the specified room indicating that a user joined.
+     * @param client - The client that joined.
      */
-    public sendJoinMessage(room: string, exclude?: Client): void {
-        console.log(`A user joined the room: ${room}.`);
-        this.clients.forEach((client) => {
-            if (client.room === room && client.socketID !== exclude?.socket.id) {
-                client.socket.emit("message", {
+    public sendJoinMessage(client: Client): void {
+        console.log(`The user: ${client.nickname} joined the room: ${client.room}.`);
+        this.clients.forEach((otherClient) => {
+            if (otherClient.socketID === client.socketID) return;
+            if (otherClient.room === client.room) {
+                otherClient.socket.emit("message", {
                     type: "join",
-                    text: "A user joined the room.",
-                    room: room
+                    text: `The user <b>${client.nickname}</b> joined the room.`,
+                    room: client.room
                 });
             }
         });
@@ -125,6 +129,16 @@ export default class ChatManager {
     }
 
     /**
+     * Sets the nickname for a client.
+     * @param socketID - The socket ID of the client to update.
+     * @param nickname - The new nickname for the client.
+     */
+    private setClientnickname(socketID: string, nickname: string): void {
+        const client = this.getClientFromID(socketID);
+        if (client) client.nickname = nickname;
+    }
+
+    /**
      * Removes a client from the list of clients.
      * @param socketID - The socket ID of the client to remove.
      */
@@ -148,6 +162,11 @@ export class Client {
     public room: string;
 
     /**
+     * The client's nickname.
+     */
+    public nickname: string;
+
+    /**
      * The client's socket ID.
      */
     public socketID: string;
@@ -160,6 +179,8 @@ export class Client {
     constructor(socket: Socket, room: string) {
         this.socket = socket;
         this.room = room;
+
+        this.nickname = "";
 
         this.socketID = socket.id;
     }
