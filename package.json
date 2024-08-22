@@ -10,7 +10,7 @@
     "license": "ISC",
     "description": "",
     "dependencies": {
-        "bad-words": "^4.0.0",
+        "@2toad/profanity": "^2.2.0",
         "express": "^4.19.2",
         "mongodb": "^6.8.0",
         "passport": "^0.7.0",

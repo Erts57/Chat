@@ -1,5 +1,6 @@
 import fs from "fs";
 import io, { type Server, type Socket } from "socket.io";
+import { profanity } from "@2toad/profanity";
 
 interface RoomList {
     private: string[];
@@ -50,12 +51,14 @@ export default class ChatManager {
 
             socket.on("nickname", ({ nickname }: { nickname: string }) => {
                 if (nickname === "") nickname = Date.now().toString();
+                nickname = profanity.censor(nickname).substring(0, 24);
                 this.setClientnickname(socket.id, nickname);
                 this.sendJoinMessage(this.getClientFromID(socket.id)!);
             });
 
             socket.on("sendMessage", ({ text }: { text: string }) => {
                 if (text === "") return;
+                text = profanity.censor(text).substring(0, 1024);
                 console.log(
                     `User: ${this.getClientFromID(socket.id)?.nickname} sent: \`${text}\` in room ${
                         this.getClientFromID(socket.id)?.room
