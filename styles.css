@@ -113,20 +113,62 @@ hr {
     background-color: #328cc4;
 }
 
+#enterNicknameTitle {
+    color: white;
+    width: 100%;
+    margin: auto;
+    text-align: center;
+}
+
+#nicknameInput[type="text"] {
+    width: 50%;
+    height: 2rem;
+    border-radius: 0.5rem;
+    border: none;
+    padding: 0.5rem;
+    outline: none;
+    transition: background-color 0.3s ease;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 5rem;
+    margin-top: 2rem;
+    box-shadow: 0.1rem 0.1rem 0.1rem rgba(0, 0, 0, 0.25);
+    outline: none;
+    text-align: center;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+#notice {
+    display: block;
+    width: 50rem;
+    height: 10rem;
+    font-size: 2rem;
+    margin: auto;
+    text-align: left;
+    word-wrap: break-word;
+}
+
 #room {
+    position: relative;
     width: 100%;
     height: calc(100vh - 10rem);
 }
 
 #roomTitle {
     color: blue;
+    text-align: left;
+    padding-left: 1rem;
 }
 
 #messages {
     height: 500px;
-    border-radius: 2rem;
+    border-radius: 0.5rem;
     background-color: rgba(255, 250, 240, 0.25);
     padding: 0.75rem;
+    box-shadow: 0.1rem 0.1rem 0.1rem rgba(0, 0, 0, 0.25);
     overflow-y: scroll;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* Internet Explorer 10+ */
@@ -192,25 +234,33 @@ hr {
     left: 0;
 }
 
-#messageInput {
-    width: 50%;
+#messageInput[type="text"] {
+    display: inline-block;
+    width: calc(100% - 1rem);
     height: 2rem;
     border-radius: 0.5rem;
     border: none;
     padding: 0.5rem;
     outline: none;
     transition: background-color 0.3s ease;
-    display: inline-block;
     vertical-align: middle;
-    margin-left: 1rem;
-    margin-right: 0.5rem;
-    margin-bottom: 0.5rem;
-    margin-top: 1rem;
+    margin: 1rem 0;
+    box-shadow: 0.1rem 0.1rem 0.1rem rgba(0, 0, 0, 0.25);
+    outline: none;
 }
 
 #onlineCount {
-    /* Not yet implemented */
-    display: none;
+    position: absolute;
+    top: 2.5rem;
+    right: 2.5rem;
+    font-size: 2rem;
+    padding: 0.25rem;
+    border-radius: 0.5rem;
+    background-color: rgba(255, 250, 240, 0.25);
+    color: darkblue;
+    font-weight: bold;
+    text-align: center;
+    vertical-align: middle;
 }
 
 .hidden {

@@ -94,6 +94,10 @@ class ClientChatManager {
             messagesElement.scrollTop = messagesElement.scrollHeight - messagesElement.clientHeight;
         });
 
+        this.socket.on("onlineCount", ({ count }) => {
+            this.setUsersOnlineCount(count);
+        });
+
         this.socket.on("invalid", () => {
             this.room = "";
             roomLandingPageElement.classList.remove("hidden");
@@ -169,6 +173,14 @@ class ClientChatManager {
      */
     createLeaveMessage(message) {
         this.createMessage(message, "", "left", ["leave"]);
+    }
+
+    /**
+     * Set the users online count.
+     * @param {number} count - The count.
+     */
+    setUsersOnlineCount(count) {
+        document.getElementById("onlineCount").innerText = count;
     }
 }
 

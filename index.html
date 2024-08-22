@@ -37,20 +37,29 @@
             <h2 id="enterNicknameTitle">Enter a nickname</h2>
 
             <input id="nicknameInput" type="text" maxlength="24" />
+            <br /><br />
+
+            <span id="notice">
+                <b style="color: red">[NOTE]</b>
+                All sent messages are filtered server side and not client side! Sending a profane message will
+                show up on your screen but other users will not see it!
+            </span>
         </div>
 
         <!-- Room page -->
         <div id="room" class="hidden">
             <!-- Room title -->
             <h1 id="roomTitle">Room</h1>
+
+            <!-- Users online count -->
+            <span id="onlineCount">0 users online</span>
+
             <div id="messages">
                 <!-- Messages will be displayed here -->
             </div>
 
             <!-- Message input field -->
             <input type="text" id="messageInput" maxlength="1024" />
-            <!-- Users online count -->
-            <span id="onlineCount">0 users online</span>
         </div>
 
         <!-- Include the Socket.IO and client.js scripts -->

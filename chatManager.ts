@@ -34,6 +34,7 @@ export default class ChatManager {
 
         this.io.on("connection", (socket: Socket) => {
             this.clients.push(new Client(socket, ""));
+            this.io.emit("onlineCount", { count: this.clients.length });
 
             socket.on("room", ({ roomCode }: { roomCode: string }) => {
                 roomCode = roomCode.substring(0, 7).toUpperCase();
@@ -81,6 +82,7 @@ export default class ChatManager {
                     this.sendLeaveMessage(this.getClientFromID(socket.id)!);
                 }
                 this.removeClientFromID(socket.id);
+                this.io.emit("onlineCount", { count: this.clients.length });
             });
         });
 
@@ -112,6 +114,7 @@ export default class ChatManager {
      * @param client - The client that left.
      */
     public sendLeaveMessage(client: Client): void {
+        if (client.nickname === "") return;
         console.log(`The user: ${client.nickname} left the room: ${client.room}.`);
         this.io.emit("message", {
             type: "leave",
